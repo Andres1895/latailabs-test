@@ -1,12 +1,20 @@
 "use client";
-import { useState, useMemo, useCallback, Fragment } from "react";
+import { useState, useMemo, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { User } from "../types/user";
 
-export default function UserTable({ initialUsers }: { initialUsers: User[] }) {
+export default function UserTable({ 
+  initialUsers,
+  currentPage,
+}: { 
+  initialUsers: User[];
+  currentPage: number;
+}) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [userDetails, setUserDetails] = useState<Set<string>>(new Set());
   
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -26,7 +34,7 @@ export default function UserTable({ initialUsers }: { initialUsers: User[] }) {
   }, [filtered, sortDir]);
 
   const toggleExpand = useCallback((userId: string) => {
-    setExpandedIds((prev) => {
+    setUserDetails((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(userId)) {
         newSet.delete(userId);
@@ -36,6 +44,14 @@ export default function UserTable({ initialUsers }: { initialUsers: User[] }) {
       return newSet;
     });
   }, []);
+
+  const handlePagination = (newPage: number) => {
+    router.push({
+      query: { 
+        page: newPage 
+      }
+    });
+  };
 
   return (
     <div>
@@ -57,7 +73,7 @@ export default function UserTable({ initialUsers }: { initialUsers: User[] }) {
         </button>
       </div>
 
-      <table className="w-full border-collapse border border-gray-300 rounded-md">
+      <table className="w-full border-collapse border border-gray-300 rounded-md mb-10">
         <thead>
           <tr className="bg-gray-100">
             <th className="border border-gray-300 p-2" >Nombre</th>
@@ -71,7 +87,7 @@ export default function UserTable({ initialUsers }: { initialUsers: User[] }) {
           {sorted.map((user: User) => (
             <>
               <tr>
-                <td className="border border-gray-300 p-2">
+                <td className="border border-gray-300 p-2 text-blue-600 hover:text-blue-800 ">
                   <Link href={`/users/${user.login.uuid}`}>
                     {user.name.first} {user.name.last}
                   </Link>
@@ -81,15 +97,15 @@ export default function UserTable({ initialUsers }: { initialUsers: User[] }) {
                 <td className="border border-gray-300 p-2">{user.company || "Sin empresa"}</td>
                 <td className="border border-gray-300 p-2">
                   <button
-                    aria-expanded={expandedIds.has(user.login.uuid)}
+                    aria-expanded={userDetails.has(user.login.uuid)}
                     onClick={() => toggleExpand(user.login.uuid)}
-                    className="text-blue-600 hover:text-blue-800 underline"
+                    className="text-blue-600 hover:text-blue-800"
                   >
-                    {expandedIds.has(user.login.uuid) ? "Ocultar" : "Mostrar"} detalles
+                    {userDetails.has(user.login.uuid) ? "Ocultar" : "Mostrar"} detalles
                   </button>
                 </td>
               </tr>
-              {expandedIds.has(user.login.uuid) && (
+              {userDetails.has(user.login.uuid) && (
                 <tr>
                   <td colSpan={5} className="border border-gray-300 p-4 bg-gray-50">
                     <div className="space-y-2">
@@ -109,6 +125,21 @@ export default function UserTable({ initialUsers }: { initialUsers: User[] }) {
           ))}
         </tbody>
       </table>
+      <div className="flex items-center justify-center gap-4 mt-6">
+        <button
+          onClick={() => handlePagination(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="bg-blue-500 text-white px-6 py-2 rounded-md disabled:bg-gray-300 hover:bg-blue-600"
+        >
+          Anterior
+        </button>
+        <button
+          onClick={() => handlePagination(currentPage + 1)}
+          className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
+        >
+          Siguiente
+        </button>
+      </div>
     </div>
   );
 }
