@@ -59,7 +59,7 @@ export default function UserTable({
 
   return (
     <div>
-      <div className="flex justify-between items-center p-4">
+      <div className="flex justify-around items-center p-4">
         <input
           type="text"
           aria-label="Buscar"
@@ -73,7 +73,7 @@ export default function UserTable({
           className="bg-blue-500 text-white px-4 py-2 rounded-md"
           onClick={() => setSortDir((d) => (d === "asc" ? "desc" : "asc"))}
         >
-          Sort {sortDir}
+          Ordenar {sortDir === "asc" ? "Descendente" : "Ascendente"}
         </button>
       </div>
 
