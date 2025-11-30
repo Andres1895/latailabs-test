@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps<{
     
     try {
       const response = await fetch(
-        `https://randomuser.me/api/?results=20&page=${page}`
+        `https://randomuser.me/api/?results=20&page=${page}&seed=demo`
       );
       
       const data = await response.json();
