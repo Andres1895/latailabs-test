@@ -3,19 +3,21 @@ import { useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { User } from "../types/user";
+import { useFavorites } from "../contexts/FavoritesContext";
 
-export default function UserTable({ 
+export default function UserTable({
   initialUsers,
   currentPage,
-}: { 
+}: {
   initialUsers: User[];
   currentPage: number;
 }) {
   const router = useRouter();
+  const { toggleFavorite, isFavorite } = useFavorites();
   const [query, setQuery] = useState("");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [userDetails, setUserDetails] = useState<Set<string>>(new Set());
-  
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return initialUsers;
@@ -26,8 +28,10 @@ export default function UserTable({
 
   const sorted = useMemo(() => {
     const arr = [...filtered];
-    arr.sort((a, b) =>  
-      `${a.name.first} ${a.name.last}`.localeCompare(`${b.name.first} ${b.name.last}`)
+    arr.sort((a, b) =>
+      `${a.name.first} ${a.name.last}`.localeCompare(
+        `${b.name.first} ${b.name.last}`
+      )
     );
     if (sortDir === "desc") arr.reverse();
     return arr;
@@ -47,9 +51,9 @@ export default function UserTable({
 
   const handlePagination = (newPage: number) => {
     router.push({
-      query: { 
-        page: newPage 
-      }
+      query: {
+        page: newPage,
+      },
     });
   };
 
@@ -76,17 +80,34 @@ export default function UserTable({
       <table className="w-full border-collapse border border-gray-300 rounded-md mb-10">
         <thead>
           <tr className="bg-gray-100">
-            <th className="border border-gray-300 p-2" >Nombre</th>
-            <th className="border border-gray-300 p-2" >Correo electrónico</th>
-            <th className="border border-gray-300 p-2" >Telefono</th>
-            <th className="border border-gray-300 p-2" >Empresa</th>
-            <th className="border border-gray-300 p-2" >Detalles</th>
+            <th className="border border-gray-300 p-2">⭐</th>
+            <th className="border border-gray-300 p-2">Nombre</th>
+            <th className="border border-gray-300 p-2">Correo electrónico</th>
+            <th className="border border-gray-300 p-2">Telefono</th>
+            <th className="border border-gray-300 p-2">Empresa</th>
+            <th className="border border-gray-300 p-2">Detalles</th>
           </tr>
         </thead>
         <tbody>
           {sorted.map((user: User) => (
             <>
               <tr>
+                <td className="border border-gray-300 p-2 text-center">
+                  <button
+                    //TO-DO EVITAR EL HYDRATATION ERROR CON ESTE COMPONENTE :(
+                    aria-label={
+                      isFavorite(user.login.uuid)
+                        ? "Quitar de favoritos"
+                        : "Agregar a favoritos"
+                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavorite(user.login.uuid);
+                    }}
+                  >
+                    {isFavorite(user.login.uuid) ? "⭐" : "☆"}
+                  </button>
+                </td>
                 <td className="border border-gray-300 p-2 text-blue-600 hover:text-blue-800 ">
                   <Link href={`/users/${user.login.uuid}?page=${currentPage}`}>
                     {user.name.first} {user.name.last}
@@ -94,26 +115,34 @@ export default function UserTable({
                 </td>
                 <td className="border border-gray-300 p-2">{user.email}</td>
                 <td className="border border-gray-300 p-2">{user.phone}</td>
-                <td className="border border-gray-300 p-2">{user.company || "Sin empresa"}</td>
+                <td className="border border-gray-300 p-2">
+                  {user.company || "Sin empresa"}
+                </td>
                 <td className="border border-gray-300 p-2">
                   <button
                     aria-expanded={userDetails.has(user.login.uuid)}
                     onClick={() => toggleExpand(user.login.uuid)}
                     className="text-blue-600 hover:text-blue-800"
                   >
-                    {userDetails.has(user.login.uuid) ? "Ocultar" : "Mostrar"} detalles
+                    {userDetails.has(user.login.uuid) ? "Ocultar" : "Mostrar"}{" "}
+                    detalles
                   </button>
                 </td>
               </tr>
               {userDetails.has(user.login.uuid) && (
                 <tr>
-                  <td colSpan={5} className="border border-gray-300 p-4 bg-gray-50">
+                  <td
+                    colSpan={6}
+                    className="border border-gray-300 p-4 bg-gray-50"
+                  >
                     <div className="space-y-2">
                       {user.location && (
                         <div>
                           <p className="font-medium">Dirección:</p>
                           <p className="text-gray-700">
-                            {user.location.street.number} {user.location.street.name}, {user.location.city}, {user.location.state} {user.location.postcode}
+                            {user.location.street.number}{" "}
+                            {user.location.street.name}, {user.location.city},{" "}
+                            {user.location.state} {user.location.postcode}
                           </p>
                         </div>
                       )}

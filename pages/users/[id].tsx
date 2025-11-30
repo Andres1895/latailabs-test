@@ -7,11 +7,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { User } from "../../types/user";
+import { useFavorites } from "../../contexts/FavoritesContext";
 
 export default function UserDetailPage({
   user,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();
+  const { toggleFavorite, isFavorite } = useFavorites();
   const page = router.query.page as string;
   const backUrl = page ? `/users?page=${page}` : "/users";
 
@@ -26,9 +28,19 @@ export default function UserDetailPage({
         </Link>
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="bg-gray-400 p-6 text-white flex justify-center items-center flex-col">
-            <h1 className="text-3xl font-bold">
-              {user.name.title} {user.name.first} {user.name.last}
-            </h1>
+            <div className="flex items-center gap-4">
+              <h1 className="text-3xl font-bold">
+                {user.name.title} {user.name.first} {user.name.last}
+              </h1>
+              <button
+                // TO-DO EVITAR EL HYDRATATION ERROR CON ESTE COMPONENTE :(
+                onClick={() => toggleFavorite(user.login.uuid)}
+                className="text-4xl hover:scale-110 transition-transform"
+                aria-label={isFavorite(user.login.uuid) ? "Quitar de favoritos" : "Agregar a favoritos"}
+              >
+                {isFavorite(user.login.uuid) ? "⭐" : "☆"}
+              </button>
+            </div>
             <div className="flex justify-center items-center">
               <Image
                 className="rounded-full"
@@ -140,7 +152,7 @@ export const getStaticProps: GetStaticProps<{ user: User }> = async ({
   const id = params?.id as string;
 
   try {
-    const MAX_PAGES = 100; // 
+    const MAX_PAGES = 100; 
     for (let page = 1; page <= MAX_PAGES; page++) {
       const response = await fetch(
         `https://randomuser.me/api/?results=20&page=${page}&seed=demo`
