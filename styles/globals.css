@@ -1,2 +1,10 @@
 @import "tailwindcss";
 
+.user-detail-content {
+  background-color: rgb(243 244 246); /* bg-gray-100 */
+}
+
+.dark .user-detail-content {
+  background-color: black;
+}
+

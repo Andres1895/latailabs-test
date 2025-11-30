@@ -18,15 +18,15 @@ export default function UserDetailPage({
   const backUrl = page ? `/users?page=${page}` : "/users";
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen p-6">
       <div className="max-w-4xl mx-auto">
         <Link
           href={backUrl}
-          className="inline-flex items-center p-2 rounded-lg w-20 text-white mb-6 justify-center bg-blue-500"
+          className="inline-flex items-center p-2 rounded-lg w-20 text-white mb-6 justify-center bg-blue-500 hover:bg-blue-600"
         >
           Volver
         </Link>
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden max-w-2xl mx-auto">
           <div className="bg-gray-400 p-6 text-white flex justify-center items-center flex-col">
             <div className="flex items-center gap-4">
               <h1 className="text-3xl font-bold">
@@ -45,14 +45,14 @@ export default function UserDetailPage({
               <Image
                 className="rounded-full"
                 src={user.picture.large}
-                alt="Description of the image"
+                alt="Profile picture"
                 width={200}
                 height={200}
               />
             </div>
           </div>
 
-          <div className="flex flex-col space-around p-8">
+          <div className="flex flex-col space-around p-8 user-detail-content">
             <div className="flex justify-around">
               <div className="flex-1">
                 <div className="flex flex-col gap-2">
@@ -81,7 +81,7 @@ export default function UserDetailPage({
                 </div>
               </div>
               <div></div>
-              <div className="flex-1">
+              <div className="flex-1 " >
                 <div className="flex-col gap-2">
                   <p className="text-sm text-gray-500">Genero</p>
                   <p className="font-medium">

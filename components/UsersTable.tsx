@@ -79,13 +79,13 @@ export default function UserTable({
 
       <table className="w-full border-collapse border border-gray-300 rounded-md mb-10">
         <thead>
-          <tr className="bg-gray-100">
-            <th className="border border-gray-300 p-2">⭐</th>
-            <th className="border border-gray-300 p-2">Nombre</th>
-            <th className="border border-gray-300 p-2">Correo electrónico</th>
-            <th className="border border-gray-300 p-2">Telefono</th>
-            <th className="border border-gray-300 p-2">Empresa</th>
-            <th className="border border-gray-300 p-2">Detalles</th>
+          <tr className="bg-gray-100 dark:bg-gray-800">
+            <th className="border border-gray-300 p-2 dark:text-white dark:bg-gray-800">⭐</th>
+            <th className="border border-gray-300 p-2 dark:text-white dark:bg-gray-800">Nombre</th>
+            <th className="border border-gray-300 p-2 dark:text-white dark:bg-gray-800">Correo electrónico</th>
+            <th className="border border-gray-300 p-2 dark:text-white dark:bg-gray-800">Telefono</th>
+            <th className="border border-gray-300 p-2 dark:text-white dark:bg-gray-800">Empresa</th>
+            <th className="border border-gray-300 p-2 dark:text-white dark:bg-gray-800">Detalles</th>
           </tr>
         </thead>
         <tbody>
