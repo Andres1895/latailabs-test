@@ -88,7 +88,7 @@ export default function UserTable({
             <>
               <tr>
                 <td className="border border-gray-300 p-2 text-blue-600 hover:text-blue-800 ">
-                  <Link href={`/users/${user.login.uuid}`}>
+                  <Link href={`/users/${user.login.uuid}?page=${currentPage}`}>
                     {user.name.first} {user.name.last}
                   </Link>
                 </td>

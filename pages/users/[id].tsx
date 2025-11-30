@@ -5,16 +5,21 @@ import type {
 } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { User } from "../../types/user";
 
 export default function UserDetailPage({
   user,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
+  const router = useRouter();
+  const page = router.query.page as string;
+  const backUrl = page ? `/users?page=${page}` : "/users";
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-4xl mx-auto">
         <Link
-          href="/users"
+          href={backUrl}
           className="inline-flex items-center p-2 rounded-lg w-20 text-white mb-6 justify-center bg-blue-500"
         >
           Volver
